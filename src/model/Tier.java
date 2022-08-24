@@ -2,18 +2,28 @@ package model;
 
 public class Tier {
 
+    private int chipnummer;
     private String name;
     private int alter;
     private char geschlecht;
     private Tierart art;
     private Persönlichkeit persönlichkeit;
 
-    public Tier(String name, int alter, char geschlecht, Tierart art, Persönlichkeit persönlichkeit) {
+    public Tier(int chipnummer, String name, int alter, char geschlecht, Tierart art, Persönlichkeit persönlichkeit) {
+        this.chipnummer = chipnummer;
         this.name = name;
         this.alter = alter;
         this.geschlecht = geschlecht;
         this.art = art;
         this.persönlichkeit = persönlichkeit;
+    }
+
+    public int getChipnummer() {
+        return chipnummer;
+    }
+
+    public void setChipnummer(int chipnummer) {
+        this.chipnummer = chipnummer;
     }
 
     public String getName() {
