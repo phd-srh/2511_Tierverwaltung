@@ -17,13 +17,13 @@ public interface TierDAO {
 
     boolean insertTierart(Tierart tierart);
     Tierart getTierartByArtnummer(int artnummer);
-    Tierart getArtnummerByBezeichnung(String bezeichnung);
+    int getArtnummerByBezeichnung(String bezeichnung);
     List<Tierart> getAllTierarten();
     boolean updateTierart(int artnummer, Tierart tierart);
     boolean deleteTierart(int artnummer);
     int holeNächsteFreieArtnummer();
 
     Persönlichkeit getPersönlichkeitByPersönlichkeitsnummer(int persönlichkeitsnummer);
-    Persönlichkeit getPersönlichkeitByBezeichnung(String bezeichnung);
+    int getPersönlichkeitsnummerByBezeichnung(String bezeichnung);
     List<Persönlichkeit> getAllPersönlichkeiten();
 }
