@@ -38,3 +38,11 @@ INSERT INTO persönlichkeit VALUES
     (7, 'zutraulich'),
     (8, 'neugierig'),
     (9, 'frech');
+
+-- Testdaten
+INSERT INTO tierart (tierart, bezeichnung) VALUES
+	(1, 'Hund');
+
+INSERT INTO tiere (chipnummer, name, `alter`, geschlecht, tierart, persönlichkeit)
+	VALUES
+    (1, 'Bello', 2, 'd', 1, 9);
