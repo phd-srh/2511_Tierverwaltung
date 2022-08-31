@@ -10,10 +10,10 @@ public class MainView extends JFrame {
     private JButton tierAbfragenButton;
     private JButton tierEinfügenButton;
     private JButton tierLöschenButton;
-    //private JButton tierartErstellenButton;
     private JButton tiereDurchsuchenButton;
     private JTextField chipnummerField, nameField, alterField, geschlechtField,
-            tierartField, persönlichkeitField;
+            persönlichkeitField;
+    private JComboBox<String> tierartComboBox;
 
     public MainView() {
         setTitle("Tierverwaltung");
@@ -49,8 +49,9 @@ public class MainView extends JFrame {
         geschlechtField = new JTextField();
         centerPanel.add( geschlechtField );
         centerPanel.add( new JLabel("Tierart:") );
-        tierartField = new JTextField();
-        centerPanel.add( tierartField );
+        tierartComboBox = new JComboBox<>();            // NEU
+        tierartComboBox.setEditable(true);
+        centerPanel.add( tierartComboBox );
         centerPanel.add( new JLabel("Persönlichkeit:") );
         persönlichkeitField = new JTextField();
         centerPanel.add( persönlichkeitField );
@@ -85,6 +86,10 @@ public class MainView extends JFrame {
 
     public void addTiereDurchsuchenButtonListener(ActionListener listener) {
         tiereDurchsuchenButton.addActionListener(listener);
+    }
+
+    public void addDefaultTierartModel(DefaultComboBoxModel<String> tierartModel) {
+        tierartComboBox.setModel(tierartModel);
     }
 
     public int getChipnummer() {
@@ -140,11 +145,23 @@ public class MainView extends JFrame {
     }
 
     public String getTierart() {
-        return tierartField.getText();
+        return (String)tierartComboBox.getSelectedItem();
     }
 
     public void setTierart(String tierart) {
-        tierartField.setText(tierart);
+        if (tierart.isEmpty()) {
+            tierartComboBox.setSelectedIndex(0);
+            return;
+        }
+
+        for (int i=0; i<tierartComboBox.getItemCount(); i++) {
+            if (tierartComboBox.getItemAt(i).equals(tierart)) {
+                tierartComboBox.setSelectedIndex(i);
+                return;
+            }
+        }
+        tierartComboBox.addItem(tierart);
+        tierartComboBox.setSelectedIndex( tierartComboBox.getItemCount()-1 );
     }
 
     public String getPersönlichkeit() {

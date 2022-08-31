@@ -10,6 +10,7 @@ import view.MainView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -21,6 +22,11 @@ public class MainController {
         this.mainView = mainView;
         this.tierDB = tierDB;
 
+        DefaultComboBoxModel<String> tierartModel = new DefaultComboBoxModel<>();
+        for (Tierart tierart : tierDB.getAllTierarten())
+            tierartModel.addElement(tierart.getBezeichnung());
+        mainView.addDefaultTierartModel(tierartModel);
+
         mainView.addTierAbfragenButtonListener( this::performAbfragen );
         mainView.addTierEinfügenButtonListener( this::performEinfügen );
         mainView.addTierLöschenButtonListener( this::performLöschen );
@@ -29,9 +35,30 @@ public class MainController {
 
     private void performDurchsuchen(ActionEvent actionEvent) {
         ListenView listenView = new ListenView();
+
         DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
         for (Tier tier : tierDB.getAllTiere()) tierListModel.addElement(tier);
         listenView.addDefaultTierModel(tierListModel);
+
+        DefaultComboBoxModel<String> tierartModel = new DefaultComboBoxModel<>();
+        tierartModel.addElement("Alle");
+        for (Tierart tierart : tierDB.getAllTierarten())
+            tierartModel.addElement(tierart.getBezeichnung());
+        listenView.addDefaultTierartModel(tierartModel);
+
+        listenView.addTierartComboBoxListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tierart = listenView.getSelectedTierart();
+                DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+                for (Tier tier : tierDB.getAllTiere()) {
+                    if (tier.getArt().getBezeichnung().equals(tierart) || tierart.equals("Alle"))
+                        tierListModel.addElement(tier);
+                }
+                listenView.addDefaultTierModel(tierListModel);
+            }
+        });
+
 
         listenView.addTierJListMouseListener(new MouseAdapter() {
             @Override
@@ -92,6 +119,7 @@ public class MainController {
             tierDB.insertTier(tier)) {
             mainView.zeigeMeldung("Tier erfolgreich eingefügt");
             mainView.setChipnummer(chipnummer);
+            mainView.setTierart( tierartBezeichnung );
         } else {
             clearTier();
         }
