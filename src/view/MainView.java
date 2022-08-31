@@ -75,27 +75,84 @@ public class MainView extends JFrame {
         tierAbfragenButton.addActionListener(listener);
     }
 
+    public void addTierEinfügenButtonListener(ActionListener listener) {
+        tierEinfügenButton.addActionListener(listener);
+    }
+
+    public void addTierLöschenButtonListener(ActionListener listener) {
+        tierLöschenButton.addActionListener(listener);
+    }
+
     public int getChipnummer() {
-        return Integer.parseInt( chipnummerField.getText() );
+        try {
+            return Integer.parseInt(chipnummerField.getText());
+        }
+        catch (NumberFormatException e) {
+            zeigeFehlerMeldung("Ungültige Chipnummer");
+            return 0;
+        }
+    }
+
+    public String getName() {
+        return nameField.getText();
     }
 
     public void setName(String name)  {
         nameField.setText(name);
     }
 
+    public int getAlter() {
+        try {
+            return Integer.parseInt(alterField.getText());
+        }
+        catch (NumberFormatException e) {
+            zeigeFehlerMeldung("Ungültiges Alter");
+            return 0;
+        }
+    }
     public void setAlter(int alter) {
-        alterField.setText( String.valueOf(alter) );
+        if (alter <= 0) {
+            alterField.setText("");
+        } else {
+            alterField.setText(String.valueOf(alter));
+        }
+    }
+
+    public char getGeschlecht() {
+        return geschlechtField.getText().charAt(0);
     }
 
     public void setGeschlecht(char geschlecht) {
         geschlechtField.setText( String.valueOf(geschlecht) );
     }
 
+    public String getTierart() {
+        return tierartField.getText();
+    }
+
     public void setTierart(String tierart) {
         tierartField.setText(tierart);
     }
 
+    public String getPersönlichkeit() {
+        return persönlichkeitField.getText();
+    }
+
     public void setPersönlichkeit(String persönlichkeit) {
         persönlichkeitField.setText(persönlichkeit);
+    }
+
+    public void zeigeMeldung(String nachricht) {
+        JOptionPane.showMessageDialog(this, nachricht, "Information",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void zeigeFehlerMeldung(String nachricht) {
+        JOptionPane.showMessageDialog(this, nachricht, "Fehler",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    public boolean zeigeRückfrage(String nachricht) {
+        return JOptionPane.showConfirmDialog(this, nachricht, "Rückfrage", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION;
     }
 }

@@ -36,7 +36,7 @@ public class SQLTierDB implements TierDAO {
                             SQLPort + "/" + SQLDatabase,
                     SQLUsername, SQLPasswort
             );
-            sqlConnection.setAutoCommit(false);
+            sqlConnection.setAutoCommit(true);  // default, aber damit es klar ist!
         }
         catch (SQLException e) {
             System.err.println("Problem beim Aufbau der Datenbankverbindung");
@@ -50,7 +50,8 @@ public class SQLTierDB implements TierDAO {
         if (tier == null) return false;
 
         int artnummer = getArtnummerByBezeichnung( tier.getArt().getBezeichnung() );
-        if (artnummer == 0) {
+        if (artnummer > 0) tier.getArt().setArtnummer(artnummer);
+        else {
             artnummer = holeNächsteFreieArtnummer();
             tier.getArt().setArtnummer(artnummer);
             insertTierart( tier.getArt() );
@@ -60,6 +61,7 @@ public class SQLTierDB implements TierDAO {
         if (persönlichkeitsnummer < 0)
             throw new IllegalArgumentException("Unbekannte Persönlichkeit");
 
+        int neueDatensätze = 0;
         try {
             PreparedStatement insertCommand = sqlConnection.prepareStatement(
                     """
@@ -73,13 +75,13 @@ public class SQLTierDB implements TierDAO {
             insertCommand.setString(4, String.valueOf(tier.getGeschlecht()));
             insertCommand.setInt(5, artnummer);
             insertCommand.setInt(6, persönlichkeitsnummer);
-            return (insertCommand.executeUpdate() > 0);
+            neueDatensätze = insertCommand.executeUpdate();
         }
         catch (SQLException e) {
             System.err.println("Problem beim Einfügen in die Datenbank");
             e.printStackTrace();
-            return false;
         }
+        return (neueDatensätze > 0);
     }
 
     @Override
@@ -158,7 +160,6 @@ public class SQLTierDB implements TierDAO {
         catch (SQLException e) {
             System.err.println("Problem beim Löschen aus der Datenbank");
             e.printStackTrace();
-            return false;
         }
         return (gelöschteDatensätze > 0);
     }
