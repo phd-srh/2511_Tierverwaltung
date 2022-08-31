@@ -65,4 +65,10 @@ public class Tier {
     public void setPersönlichkeit(Persönlichkeit persönlichkeit) {
         this.persönlichkeit = persönlichkeit;
     }
+
+    public String toString() {
+        return chipnummer + " | " +
+                name + " (" + alter + ") " +
+                art.toString();
+    }
 }

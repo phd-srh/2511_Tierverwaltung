@@ -5,13 +5,17 @@ import DAO.TierDAO;
 import model.Persönlichkeit;
 import model.Tier;
 import model.Tierart;
+import view.ListenView;
 import view.MainView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainController {
-    private MainView mainView;
-    private TierDAO tierDB;
+    private final MainView mainView;
+    private final TierDAO tierDB;
 
     public MainController(MainView mainView, TierDAO tierDB) {
         this.mainView = mainView;
@@ -20,6 +24,26 @@ public class MainController {
         mainView.addTierAbfragenButtonListener( this::performAbfragen );
         mainView.addTierEinfügenButtonListener( this::performEinfügen );
         mainView.addTierLöschenButtonListener( this::performLöschen );
+        mainView.addTiereDurchsuchenButtonListener( this::performDurchsuchen );
+    }
+
+    private void performDurchsuchen(ActionEvent actionEvent) {
+        ListenView listenView = new ListenView();
+        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        for (Tier tier : tierDB.getAllTiere()) tierListModel.addElement(tier);
+        listenView.addDefaultTierModel(tierListModel);
+
+        listenView.addTierJListMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Tier t = listenView.getSelectedTier();
+                    listenView.dispose();
+                    mainView.setChipnummer(t.getChipnummer());
+                    showTier(t);
+                }
+            }
+        });
     }
 
     private void performAbfragen(ActionEvent actionEvent) {
@@ -29,7 +53,19 @@ public class MainController {
     }
 
     private void performEinfügen(ActionEvent actionEvent) {
-        int chipnummer = tierDB.holeNächsteFreieChipnummer();
+        boolean updateTier = false;
+        int chipnummer = mainView.getChipnummer();
+        if (chipnummer <= 0)
+            chipnummer = tierDB.holeNächsteFreieChipnummer();
+        else {
+            if (tierDB.getTierByChipnummer(chipnummer) != null) {
+                if (!mainView.zeigeRückfrage(
+                        "Chipnummer existiert bereits. Überschreiben erwünscht?"))
+                    return;
+                updateTier = true;
+            }
+        }
+
         String name = mainView.getName();
         int alter = mainView.getAlter();
         char geschlecht = mainView.getGeschlecht();
@@ -52,8 +88,10 @@ public class MainController {
                 new Tierart( 0, tierartBezeichnung ),
                 Persönlichkeit.valueOf( persönlichkeitBezeichnung )
         );
-        if (tierDB.insertTier(tier)) {
+        if (updateTier && tierDB.updateTier(chipnummer, tier) ||
+            tierDB.insertTier(tier)) {
             mainView.zeigeMeldung("Tier erfolgreich eingefügt");
+            mainView.setChipnummer(chipnummer);
         } else {
             clearTier();
         }
@@ -64,6 +102,7 @@ public class MainController {
         if (abfrage) {
             if (tierDB.deleteTier(mainView.getChipnummer())) {
                 mainView.zeigeMeldung("Tier erfolgreich gelöscht");
+                clearTier();
             } else {
                 mainView.zeigeFehlerMeldung("Tier konnte nicht gelöscht werden");
             }

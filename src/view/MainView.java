@@ -83,14 +83,24 @@ public class MainView extends JFrame {
         tierLöschenButton.addActionListener(listener);
     }
 
+    public void addTiereDurchsuchenButtonListener(ActionListener listener) {
+        tiereDurchsuchenButton.addActionListener(listener);
+    }
+
     public int getChipnummer() {
+        String nummer = chipnummerField.getText();
+        if (nummer.isEmpty()) return 0;
         try {
-            return Integer.parseInt(chipnummerField.getText());
+            return Integer.parseInt(nummer);
         }
         catch (NumberFormatException e) {
             zeigeFehlerMeldung("Ungültige Chipnummer");
             return 0;
         }
+    }
+
+    public void setChipnummer(int chipnummer) {
+        chipnummerField.setText( String.valueOf(chipnummer) );
     }
 
     public String getName() {
@@ -123,7 +133,10 @@ public class MainView extends JFrame {
     }
 
     public void setGeschlecht(char geschlecht) {
-        geschlechtField.setText( String.valueOf(geschlecht) );
+        if (geschlecht == ' ')
+            geschlechtField.setText("");
+        else
+            geschlechtField.setText( String.valueOf(geschlecht) );
     }
 
     public String getTierart() {
