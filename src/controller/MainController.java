@@ -1,7 +1,6 @@
 package controller;
 
-import DAO.SQLTierDB;
-import DAO.TierDAO;
+import DAO.*;
 import model.Persönlichkeit;
 import model.Tier;
 import model.Tierart;
@@ -154,6 +153,6 @@ public class MainController {
     }
 
     public static void main(String[] args) {
-        new MainController( new MainView(), new SQLTierDB() );
+        new MainController( new MainView(), new TempTierDB() );
     }
 }
