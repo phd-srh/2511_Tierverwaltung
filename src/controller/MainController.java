@@ -26,10 +26,45 @@ public class MainController {
             tierartModel.addElement(tierart.getBezeichnung());
         mainView.addDefaultTierartModel(tierartModel);
 
+        DefaultComboBoxModel<String> persönlichkeitModel = new DefaultComboBoxModel<>();
+        for (Persönlichkeit p : tierDB.getAllPersönlichkeiten())
+            persönlichkeitModel.addElement( p.toString() );
+        mainView.addDefaultPersönlichkeitModel(persönlichkeitModel);
+
         mainView.addTierAbfragenButtonListener( this::performAbfragen );
         mainView.addTierEinfügenButtonListener( this::performEinfügen );
         mainView.addTierLöschenButtonListener( this::performLöschen );
         mainView.addTiereDurchsuchenButtonListener( this::performDurchsuchen );
+        mainView.addTierVorwärtsButtonListener( this::performVorwärts );
+        mainView.addTierZurückButtonListener( this::performZurück );
+    }
+
+    private void performZurück(ActionEvent actionEvent) {
+        int chipnummer = mainView.getChipnummer();
+
+        Tier tier;
+        do {
+            chipnummer--;
+            if (chipnummer <= 0)
+                return;
+            tier = tierDB.getTierByChipnummer(chipnummer);
+        } while (tier == null);
+
+        showTier(tier);
+    }
+
+    private void performVorwärts(ActionEvent actionEvent) {
+        int chipnummer = mainView.getChipnummer();
+
+        Tier tier;
+        do {
+            chipnummer++;
+            if (chipnummer >= tierDB.holeNächsteFreieChipnummer())
+                return;
+            tier = tierDB.getTierByChipnummer(chipnummer);
+        } while (tier == null);
+
+        showTier(tier);
     }
 
     private void performDurchsuchen(ActionEvent actionEvent) {
@@ -137,6 +172,7 @@ public class MainController {
     }
 
     private void showTier(Tier tier) {
+        mainView.setChipnummer( tier.getChipnummer() );
         mainView.setName( tier.getName() );
         mainView.setAlter( tier.getAlter() );
         mainView.setGeschlecht( tier.getGeschlecht() );

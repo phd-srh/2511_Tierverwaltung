@@ -11,9 +11,11 @@ public class MainView extends JFrame {
     private JButton tierEinfügenButton;
     private JButton tierLöschenButton;
     private JButton tiereDurchsuchenButton;
-    private JTextField chipnummerField, nameField, alterField, geschlechtField,
-            persönlichkeitField;
-    private JComboBox<String> tierartComboBox;
+    private JTextField chipnummerField, nameField, alterField;
+    private JComboBox<String> tierartComboBox,
+            persönlichkeitComboBox;
+    private JButton tierZurückButton, tierVorwärtsButton;
+    private JRadioButton geschlechtM, geschlechtW, geschlechtD;
 
     public MainView() {
         setTitle("Tierverwaltung");
@@ -46,30 +48,43 @@ public class MainView extends JFrame {
         alterField = new JTextField();
         centerPanel.add( alterField );
         centerPanel.add( new JLabel("Geschlecht:") );
-        geschlechtField = new JTextField();
-        centerPanel.add( geschlechtField );
+
+        JPanel radioPanel = new JPanel( new FlowLayout(FlowLayout.LEFT) );
+        ButtonGroup bg = new ButtonGroup();
+        geschlechtM = new JRadioButton("m");
+        geschlechtW = new JRadioButton("w");
+        geschlechtD = new JRadioButton("d");
+        bg.add(geschlechtM);
+        bg.add(geschlechtW);
+        bg.add(geschlechtD);
+        radioPanel.add(geschlechtM);
+        radioPanel.add(geschlechtW);
+        radioPanel.add(geschlechtD);
+
+        centerPanel.add( radioPanel );
         centerPanel.add( new JLabel("Tierart:") );
         tierartComboBox = new JComboBox<>();            // NEU
         tierartComboBox.setEditable(true);
         centerPanel.add( tierartComboBox );
         centerPanel.add( new JLabel("Persönlichkeit:") );
-        persönlichkeitField = new JTextField();
-        centerPanel.add( persönlichkeitField );
-
-        JButton beendenButton = new JButton("Beenden");
-        beendenButton.addActionListener( e -> dispose() );
+        persönlichkeitComboBox = new JComboBox<>();
+        persönlichkeitComboBox.setEditable(false);
+        centerPanel.add( persönlichkeitComboBox );
 
         tierAbfragenButton = new JButton("Abfragen");
         tierEinfügenButton  = new JButton("Einfügen");
         tierLöschenButton = new JButton("Löschen");
         //tierartErstellenButton = new JButton("Tierart erstellen");
         tiereDurchsuchenButton = new JButton("Durchsuchen");
+        tierZurückButton = new JButton("\u2190");
+        tierVorwärtsButton = new JButton("\u2192");
 
+        bottomPanel.add(tierZurückButton);
         bottomPanel.add(tierAbfragenButton);
         bottomPanel.add(tierEinfügenButton);
         bottomPanel.add(tierLöschenButton);
         bottomPanel.add(tiereDurchsuchenButton);
-        bottomPanel.add(beendenButton);
+        bottomPanel.add(tierVorwärtsButton);
     }
 
     public void addTierAbfragenButtonListener(ActionListener listener) {
@@ -90,6 +105,18 @@ public class MainView extends JFrame {
 
     public void addDefaultTierartModel(DefaultComboBoxModel<String> tierartModel) {
         tierartComboBox.setModel(tierartModel);
+    }
+
+    public void addDefaultPersönlichkeitModel(DefaultComboBoxModel<String> persönlichkeitModel) {
+        persönlichkeitComboBox.setModel(persönlichkeitModel);
+    }
+
+    public void addTierVorwärtsButtonListener(ActionListener listener) {
+        tierVorwärtsButton.addActionListener(listener);
+    }
+
+    public void addTierZurückButtonListener(ActionListener listener) {
+        tierZurückButton.addActionListener(listener);
     }
 
     public int getChipnummer() {
@@ -134,14 +161,21 @@ public class MainView extends JFrame {
     }
 
     public char getGeschlecht() {
-        return geschlechtField.getText().charAt(0);
+        if (geschlechtM.isSelected())
+            return 'm';
+        else if (geschlechtW.isSelected())
+            return 'w';
+        else
+            return 'd';
     }
 
     public void setGeschlecht(char geschlecht) {
-        if (geschlecht == ' ')
-            geschlechtField.setText("");
+        if (geschlecht == 'm')
+            geschlechtM.setSelected(true);
+        else if (geschlecht == 'w')
+            geschlechtW.setSelected(true);
         else
-            geschlechtField.setText( String.valueOf(geschlecht) );
+            geschlechtD.setSelected(true);
     }
 
     public String getTierart() {
@@ -165,11 +199,23 @@ public class MainView extends JFrame {
     }
 
     public String getPersönlichkeit() {
-        return persönlichkeitField.getText();
+        return (String)persönlichkeitComboBox.getSelectedItem();
     }
 
     public void setPersönlichkeit(String persönlichkeit) {
-        persönlichkeitField.setText(persönlichkeit);
+        if (persönlichkeit.isEmpty()) {
+            persönlichkeitComboBox.setSelectedIndex(0);
+            return;
+        }
+
+        for (int i=0; i<persönlichkeitComboBox.getItemCount(); i++) {
+            if (persönlichkeitComboBox.getItemAt(i).equals(persönlichkeit)) {
+                persönlichkeitComboBox.setSelectedIndex(i);
+                return;
+            }
+        }
+        persönlichkeitComboBox.addItem(persönlichkeit);
+        persönlichkeitComboBox.setSelectedIndex( persönlichkeitComboBox.getItemCount()-1 );
     }
 
     public void zeigeMeldung(String nachricht) {
