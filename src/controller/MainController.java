@@ -8,10 +8,7 @@ import view.ListenView;
 import view.MainView;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 public class MainController {
     private final MainView mainView;
@@ -67,6 +64,19 @@ public class MainController {
         showTier(tier);
     }
 
+    private void updateTierListModel(ListenView listenView) {
+        String tierbezeichnung = listenView.getTierbezeichnung();
+        String tierart = listenView.getSelectedTierart();
+        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        for (Tier tier : tierDB.getAllTiere()) {
+            if (tier.getArt().getBezeichnung().equals(tierart) || tierart.equals("Alle")) {
+                if (tier.getName().indexOf(tierbezeichnung) >= 0)
+                    tierListModel.addElement(tier);
+            }
+        }
+        listenView.addDefaultTierModel(tierListModel);
+    }
+
     private void performDurchsuchen(ActionEvent actionEvent) {
         ListenView listenView = new ListenView();
 
@@ -83,16 +93,16 @@ public class MainController {
         listenView.addTierartComboBoxListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String tierart = listenView.getSelectedTierart();
-                DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
-                for (Tier tier : tierDB.getAllTiere()) {
-                    if (tier.getArt().getBezeichnung().equals(tierart) || tierart.equals("Alle"))
-                        tierListModel.addElement(tier);
-                }
-                listenView.addDefaultTierModel(tierListModel);
+                updateTierListModel(listenView);
             }
         });
 
+        listenView.addTierbezeichnungFeldKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateTierListModel(listenView);
+            }
+        });
 
         listenView.addTierJListMouseListener(new MouseAdapter() {
             @Override

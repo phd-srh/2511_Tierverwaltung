@@ -6,11 +6,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 
 public class ListenView extends JFrame {
     private JList<Tier> tierJList;
     private JComboBox<String> tierartComboBox;
+    private JTextField tierbezeichnungField;
 
     public ListenView() {
         setTitle("Alle Tiere");
@@ -22,13 +24,16 @@ public class ListenView extends JFrame {
 
     private void addComponents() {
         setLayout( new BorderLayout() );
-        JPanel controlPanel = new JPanel( new GridLayout(1,2) );
+        JPanel controlPanel = new JPanel( new GridLayout(1,3) );
         JPanel contentPanel = new JPanel(  new GridLayout(1,1) );
         controlPanel.setBorder( new EmptyBorder(5,5,5,5) );
         contentPanel.setBorder( new EmptyBorder(5,5,5,5) );
 
+        tierbezeichnungField = new JTextField();
+        controlPanel.add(tierbezeichnungField);
+
         tierartComboBox = new JComboBox<>();
-        controlPanel.add( new JLabel("Tierart:") );
+        controlPanel.add( new JLabel("   Tierart:") );
         controlPanel.add( tierartComboBox );
 
         tierJList = new JList<>();
@@ -54,6 +59,14 @@ public class ListenView extends JFrame {
 
     public void addDefaultTierartModel(DefaultComboBoxModel<String> tierartModel) {
         tierartComboBox.setModel(tierartModel);
+    }
+
+    public void addTierbezeichnungFeldKeyListener(KeyListener listener) {
+        tierbezeichnungField.addKeyListener(listener);
+    }
+
+    public String getTierbezeichnung() {
+        return tierbezeichnungField.getText();
     }
 
     public Tier getSelectedTier() {
