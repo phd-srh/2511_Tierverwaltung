@@ -5,6 +5,7 @@ import model.Tier;
 import model.Tierart;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TempTierDB implements TierDAO {
@@ -106,51 +107,83 @@ public class TempTierDB implements TierDAO {
 
     @Override
     public boolean insertTierart(Tierart tierart) {
-        return false;
+        if (tierart == null) return false;
+        for (Tierart ta : tierartListe) {
+            if (ta.getArtnummer() == tierart.getArtnummer())
+                return false;
+        }
+        tierartListe.add( cloneTierart(tierart) );
+        return true;
     }
 
     @Override
     public Tierart getTierartByArtnummer(int artnummer) {
+        for (Tierart tierart : tierartListe) {
+            if (artnummer == tierart.getArtnummer())
+                return cloneTierart(tierart);
+        }
         return null;
     }
 
     @Override
     public int getArtnummerByBezeichnung(String bezeichnung) {
+        for (Tierart tierart : tierartListe) {
+            if ( bezeichnung.equals(tierart.getBezeichnung()) )
+                return tierart.getArtnummer();
+        }
         return 0;
     }
 
     @Override
     public List<Tierart> getAllTierarten() {
-        return null;
+        List<Tierart> copyList = new ArrayList<>( tierartListe.size() );
+        for (Tierart tierart : tierartListe) {
+            copyList.add( cloneTierart(tierart) );
+        }
+        return copyList;
     }
 
     @Override
     public boolean updateTierart(int artnummer, Tierart tierart) {
-        return false;
+        deleteTierart(artnummer);
+        return insertTierart(tierart);
     }
 
     @Override
     public boolean deleteTierart(int artnummer) {
+        for (int i=0; i < tierartListe.size(); i++) {
+            if (tierartListe.get(i).getArtnummer() == artnummer) {
+                tierartListe.remove(i);
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public int holeNächsteFreieArtnummer() {
-        return 0;
+        int maxArtnummer = 0;
+        for (Tierart tierart : tierartListe) {
+            if (tierart.getArtnummer() > maxArtnummer)
+                maxArtnummer = tierart.getArtnummer();
+        }
+        return maxArtnummer + 1;
     }
 
     @Override
     public Persönlichkeit getPersönlichkeitByPersönlichkeitsnummer(int persönlichkeitsnummer) {
-        return null;
+        return Persönlichkeit.values()[ persönlichkeitsnummer ];
     }
 
     @Override
     public int getPersönlichkeitsnummerByBezeichnung(String bezeichnung) {
-        return 0;
+        return Persönlichkeit.valueOf(bezeichnung).ordinal();
     }
 
     @Override
     public List<Persönlichkeit> getAllPersönlichkeiten() {
-        return null;
+        List<Persönlichkeit> persönlichkeitList = new ArrayList<>();
+        persönlichkeitList.addAll(Arrays.asList(Persönlichkeit.values()));
+        return persönlichkeitList;
     }
 }
