@@ -1,6 +1,6 @@
 package model;
 
-public class Tier {
+public class Tier implements Comparable<Tier> {
 
     private int chipnummer;
     private String name;
@@ -70,5 +70,10 @@ public class Tier {
         return chipnummer + " | " +
                 name + " (" + alter + ") " +
                 art.toString();
+    }
+
+    @Override
+    public int compareTo(Tier that) {
+        return this.getChipnummer() - that.getChipnummer();
     }
 }

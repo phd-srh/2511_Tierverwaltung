@@ -13,10 +13,12 @@ public class ListenView extends JFrame {
     private JList<Tier> tierJList;
     private JComboBox<String> tierartComboBox;
     private JTextField tierbezeichnungField;
+    private JButton sortiereAlterAbsteigendButton,
+            sortiereAlterAufsteigendButton;
 
     public ListenView() {
         setTitle("Alle Tiere");
-        setSize(400, 250);
+        setSize(600, 250);
         addComponents();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
@@ -33,7 +35,19 @@ public class ListenView extends JFrame {
         controlPanel.add(tierbezeichnungField);
 
         tierartComboBox = new JComboBox<>();
-        controlPanel.add( new JLabel("   Tierart:") );
+
+        JPanel extraPanel = new JPanel( new FlowLayout() );
+        sortiereAlterAufsteigendButton = new JButton("\u2b06");
+        sortiereAlterAbsteigendButton = new JButton("\u2b07");
+        sortiereAlterAufsteigendButton.setToolTipText("Nach Alter aufsteigend sortieren");
+        sortiereAlterAbsteigendButton.setToolTipText("Nach Alter absteigend sortieren");
+
+        extraPanel.add( new JLabel("    ") );
+        extraPanel.add( sortiereAlterAufsteigendButton );
+        extraPanel.add( sortiereAlterAbsteigendButton );
+        extraPanel.add( new JLabel("   Tierart:") );
+        controlPanel.add( extraPanel );
+
         controlPanel.add( tierartComboBox );
 
         tierJList = new JList<>();
@@ -63,6 +77,14 @@ public class ListenView extends JFrame {
 
     public void addTierbezeichnungFeldKeyListener(KeyListener listener) {
         tierbezeichnungField.addKeyListener(listener);
+    }
+
+    public void setSortiereAlterAufsteigendButtonListener(ActionListener listener) {
+        sortiereAlterAufsteigendButton.addActionListener(listener);
+    }
+
+    public void setSortiereAlterAbsteigendButtonListener(ActionListener listener) {
+        sortiereAlterAbsteigendButton.addActionListener(listener);
     }
 
     public String getTierbezeichnung() {

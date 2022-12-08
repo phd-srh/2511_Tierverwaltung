@@ -9,10 +9,14 @@ import view.MainView;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class MainController {
     private final MainView mainView;
     private final TierDAO tierDB;
+    private ListenView listenView;
 
     public MainController(MainView mainView, TierDAO tierDB) {
         this.mainView = mainView;
@@ -64,21 +68,29 @@ public class MainController {
         showTier(tier);
     }
 
-    private void updateTierListModel(ListenView listenView) {
+    List<Tier> getEingeschränkteTierListe() {
         String tierbezeichnung = listenView.getTierbezeichnung();
         String tierart = listenView.getSelectedTierart();
-        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        List<Tier> tierList = new ArrayList<>();
         for (Tier tier : tierDB.getAllTiere()) {
             if (tier.getArt().getBezeichnung().equals(tierart) || tierart.equals("Alle")) {
                 if (tier.getName().indexOf(tierbezeichnung) >= 0)
-                    tierListModel.addElement(tier);
+                    tierList.add(tier);
             }
+        }
+        return tierList;
+    }
+
+    private void updateTierListModel() {
+        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        for (Tier tier : getEingeschränkteTierListe()) {
+            tierListModel.addElement(tier);
         }
         listenView.addDefaultTierModel(tierListModel);
     }
 
     private void performDurchsuchen(ActionEvent actionEvent) {
-        ListenView listenView = new ListenView();
+        listenView = new ListenView();
 
         DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
         for (Tier tier : tierDB.getAllTiere()) tierListModel.addElement(tier);
@@ -90,17 +102,20 @@ public class MainController {
             tierartModel.addElement(tierart.getBezeichnung());
         listenView.addDefaultTierartModel(tierartModel);
 
+        listenView.setSortiereAlterAufsteigendButtonListener( this::performSortierAufsteigend );
+        listenView.setSortiereAlterAbsteigendButtonListener( this::performSortierAbsteigend );
+
         listenView.addTierartComboBoxListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateTierListModel(listenView);
+                updateTierListModel();
             }
         });
 
         listenView.addTierbezeichnungFeldKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                updateTierListModel(listenView);
+                updateTierListModel();
             }
         });
 
@@ -115,6 +130,30 @@ public class MainController {
                 }
             }
         });
+    }
+
+    private void performSortierAbsteigend(ActionEvent actionEvent) {
+        List<Tier> alleTiere = getEingeschränkteTierListe();
+        // sortieren aller Tiere nach Alter !?
+        alleTiere.sort( (a, b) -> b.getAlter() - a.getAlter() );
+
+        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        for (Tier tier : alleTiere) {
+            tierListModel.addElement(tier);
+        }
+        listenView.addDefaultTierModel(tierListModel);
+    }
+
+    private void performSortierAufsteigend(ActionEvent actionEvent) {
+        List<Tier> alleTiere = getEingeschränkteTierListe();
+        // sortieren aller Tiere nach Alter !?
+        alleTiere.sort( Comparator.comparingInt(Tier::getAlter) );
+
+        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
+        for (Tier tier : alleTiere) {
+            tierListModel.addElement(tier);
+        }
+        listenView.addDefaultTierModel(tierListModel);
     }
 
     private void performAbfragen(ActionEvent actionEvent) {
