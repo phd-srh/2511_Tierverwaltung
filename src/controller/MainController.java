@@ -78,6 +78,10 @@ public class MainController {
                     tierList.add(tier);
             }
         }
+        if (listenView.getSortierungsAuswahl() == 'A')
+            tierList.sort( Comparator.comparingInt(Tier::getAlter) );
+        else if (listenView.getSortierungsAuswahl() == 'D')
+            tierList.sort( (a, b) -> b.getAlter() - a.getAlter() );
         return tierList;
     }
 
@@ -133,27 +137,13 @@ public class MainController {
     }
 
     private void performSortierAbsteigend(ActionEvent actionEvent) {
-        List<Tier> alleTiere = getEingeschränkteTierListe();
-        // sortieren aller Tiere nach Alter !?
-        alleTiere.sort( (a, b) -> b.getAlter() - a.getAlter() );
-
-        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
-        for (Tier tier : alleTiere) {
-            tierListModel.addElement(tier);
-        }
-        listenView.addDefaultTierModel(tierListModel);
+        listenView.setSortierungsAuswahl('D');
+        updateTierListModel();
     }
 
     private void performSortierAufsteigend(ActionEvent actionEvent) {
-        List<Tier> alleTiere = getEingeschränkteTierListe();
-        // sortieren aller Tiere nach Alter !?
-        alleTiere.sort( Comparator.comparingInt(Tier::getAlter) );
-
-        DefaultListModel<Tier> tierListModel = new DefaultListModel<>();
-        for (Tier tier : alleTiere) {
-            tierListModel.addElement(tier);
-        }
-        listenView.addDefaultTierModel(tierListModel);
+        listenView.setSortierungsAuswahl('A');
+        updateTierListModel();
     }
 
     private void performAbfragen(ActionEvent actionEvent) {

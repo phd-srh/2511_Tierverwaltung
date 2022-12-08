@@ -13,7 +13,7 @@ public class ListenView extends JFrame {
     private JList<Tier> tierJList;
     private JComboBox<String> tierartComboBox;
     private JTextField tierbezeichnungField;
-    private JButton sortiereAlterAbsteigendButton,
+    private JToggleButton sortiereAlterAbsteigendButton,
             sortiereAlterAufsteigendButton;
 
     public ListenView() {
@@ -37,8 +37,8 @@ public class ListenView extends JFrame {
         tierartComboBox = new JComboBox<>();
 
         JPanel extraPanel = new JPanel( new FlowLayout() );
-        sortiereAlterAufsteigendButton = new JButton("\u2b06");
-        sortiereAlterAbsteigendButton = new JButton("\u2b07");
+        sortiereAlterAufsteigendButton = new JToggleButton("\u2b06");
+        sortiereAlterAbsteigendButton = new JToggleButton("\u2b07");
         sortiereAlterAufsteigendButton.setToolTipText("Nach Alter aufsteigend sortieren");
         sortiereAlterAbsteigendButton.setToolTipText("Nach Alter absteigend sortieren");
 
@@ -97,5 +97,25 @@ public class ListenView extends JFrame {
 
     public String getSelectedTierart() {
         return (String)tierartComboBox.getSelectedItem();
+    }
+
+    public char getSortierungsAuswahl() {
+        if (sortiereAlterAufsteigendButton.isSelected())
+            return 'A';
+        else if (sortiereAlterAbsteigendButton.isSelected())
+            return 'D';
+        else
+            return 'N'; // dieser Wert ist egal
+    }
+
+    public void setSortierungsAuswahl(char sortierungsAuswahl) {
+        sortiereAlterAufsteigendButton.setSelected(false);
+        sortiereAlterAbsteigendButton.setSelected(false);
+        if (sortierungsAuswahl == 'A') {
+            sortiereAlterAufsteigendButton.setSelected(true);
+        }
+        else if (sortierungsAuswahl == 'D') {
+            sortiereAlterAbsteigendButton.setSelected(true);
+        }
     }
 }
